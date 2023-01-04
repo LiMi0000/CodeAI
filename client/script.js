@@ -63,7 +63,7 @@ function chatStripe(isAi, value, uniqueId) {
 }
 
 // creating submit function to trigger ai to generate message/response from users questions
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const data = new FormData(form);
@@ -82,6 +82,33 @@ const handleSubmit = (e) => {
   const messageDiv = document.getElementById(uniqueId);
 
   loader(messageDiv);
+
+  // fetch data from the server -> bot response
+  const response = await fetch('http://localhost:5000', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: data.get('prompt'),
+    }),
+  });
+
+  clearInterval(loadInterval);
+  messageDiv.innerHTML = '';
+
+  if (response.ok) {
+    const data = await response.json();
+    const parsedData = data.bot.trim();
+
+    typeText(messageDiv, parsedData);
+  } else {
+    const error = await response.text();
+
+    messageDiv.innerHTML = 'Something went wrong....';
+
+    alert(error);
+  }
 };
 
 form.addEventListener('submit', handleSubmit);
