@@ -43,6 +43,6 @@ app.post('/', async (req, res) => {
   }
 });
 
-app.listen(5000, () =>
-  console.log(`server is running on: http://localhost:5000`)
+app.listen(3000, () =>
+  console.log(`server is running on: http://localhost:3000`)
 );
